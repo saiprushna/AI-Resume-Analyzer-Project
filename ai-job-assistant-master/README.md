@@ -2,7 +2,7 @@
 
 Upload a resume (PDF or DOCX) and get **ATS score**, **skill gap analysis**, **3 portfolio project ideas**, and **10 mock interview Q&As** with detailed explanations — built for students and junior developers.
 
-**Author:** [K HUNNURJI RAO](https://github.com/hunnurjirao) · [Portfolio](https://hunnurjirao.netlify.app)
+**Author:** [SAIPRUSHNA ODNAM](https://github.com/saiprushna) · [Portfolio](https://saiprushna-me-6w6u.vercel.app/)
 
 ## Features
 
@@ -67,7 +67,7 @@ ai-job-assistant/
 
 ## Deploy to Render
 
-1. Push this repo to [GitHub](https://github.com/hunnurjirao)
+1. Push this repo to [GitHub](https://github.com/saiprushna/AI-Resume-Analyzer-Project)
 2. Create Render Web Service → Docker
 3. Add environment variable: `GEMINI_API_KEY`
 4. Deploy → share live URL in your portfolio
