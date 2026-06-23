@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI Job Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <div class="bg-mesh" aria-hidden="true"></div>
+
+    <header class="header">
+      <div class="shell header__inner">
+        <a class="brand" href="/">
+          <span class="brand__mark">AI</span>
+          <span class="brand__text">
+            <strong>AI Job Assistant</strong>
+            <small>Resume analysis · Interview prep · Powered by Gemini</small>
+          </span>
+        </a>
+        <span id="healthStatus" class="status-pill status-pill--loading">Checking…</span>
+      </div>
+    </header>
+
+    <main class="shell main">
+      <section class="hero">
+        <div class="hero__badge">✦ Built for B.Tech students & junior developers By Saiprushna odnam</div>
+        <h1 class="hero__title">
+          Ready for your next interview?
+          <span class="hero__gradient">Let AI review your resume.</span>
+        </h1>
+        <p class="hero__sub">
+          Upload your resume and get an ATS score, skill gap analysis, portfolio project ideas,
+          and <em>10 detailed mock interview questions</em> with sample answers and explanations.
+        </p>
+        <div class="hero__stats">
+          <div class="stat-chip"><span>📄</span> PDF & DOCX</div>
+          <div class="stat-chip"><span>🎯</span> ATS score</div>
+          <div class="stat-chip"><span>💬</span> 10 interview Q&As</div>
+        </div>
+      </section>
+
+      <div class="layout">
+        <section class="panel panel--form">
+          <div class="panel__head">
+            <h2>Analyze your resume</h2>
+            <p>Select a target role and upload your resume to get started</p>
+          </div>
+
+          <form id="analyzeForm" class="form">
+            <div class="field">
+              <label class="field__label" for="targetRole">Target job role</label>
+              <div class="select-wrap">
+                <select id="targetRole" name="target_role" class="field__input" required></select>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label">Resume (PDF or DOCX)</label>
+              <div id="dropZone" class="drop-zone">
+                <input
+                  id="resumeFile"
+                  type="file"
+                  accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                  class="sr-only"
+                />
+                <div id="dropHint" class="drop-zone__empty">
+                  <div class="drop-zone__icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <path d="M12 16V4m0 0L8 8m4-4 4 4M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/>
+                    </svg>
+                  </div>
+                  <p class="drop-zone__title">Drag & drop your resume</p>
+                  <p class="drop-zone__hint">or click to browse · PDF / DOCX · max 5 MB</p>
+                </div>
+                <div id="fileName" class="drop-zone__file hidden">
+                  <div class="file-badge">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                      <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
+                    </svg>
+                    <span id="fileNameText"></span>
+                  </div>
+                  <button type="button" id="clearFile" class="text-btn">Change file</button>
+                </div>
+              </div>
+            </div>
+
+            <button id="submitBtn" type="submit" class="btn btn--primary">
+              <span>Analyze my resume</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M5 12h14M13 6l6 6-6 6"/>
+              </svg>
+            </button>
+          </form>
+        </section>
+
+        <aside class="panel panel--side">
+          <div class="side-card">
+            <div class="side-card__num">01</div>
+            <h3>Upload</h3>
+            <p>PDF or Word resume — text-based files work best.</p>
+          </div>
+          <div class="side-card">
+            <div class="side-card__num">02</div>
+            <h3>AI analysis</h3>
+            <p>ATS score and skill gaps matched to your target role.</p>
+          </div>
+          <div class="side-card side-card--accent">
+            <div class="side-card__num">03</div>
+            <h3>Interview prep</h3>
+            <p>3 project ideas + 10 mock Q&As with detailed explanations.</p>
+          </div>
+        </aside>
+      </div>
+
+      <section id="loadingSection" class="panel panel--loading hidden">
+        <div class="loader">
+          <div class="loader__ring"></div>
+          <div class="loader__dots"><span></span><span></span><span></span></div>
+        </div>
+        <h3>Analyzing your resume…</h3>
+        <p>This may take ~30 seconds — generating scores, gaps, and interview prep</p>
+      </section>
+
+      <section id="errorSection" class="alert alert--error hidden">
+        <div class="alert__icon">!</div>
+        <div>
+          <strong>Something went wrong</strong>
+          <p id="errorText"></p>
+        </div>
+      </section>
+
+      <section id="resultsSection" class="results hidden">
+        <div class="results__header">
+          <div>
+            <p class="results__eyebrow">Analysis complete</p>
+            <h2 id="candidateName" class="results__name">Candidate</h2>
+            <p id="targetRoleLabel" class="results__role"></p>
+          </div>
+        </div>
+
+        <div class="bento">
+          <article class="bento__score card">
+            <p class="card__label">ATS Score</p>
+            <div class="score-ring-wrap">
+              <svg class="score-ring" viewBox="0 0 120 120">
+                <circle class="score-ring__bg" cx="60" cy="60" r="52"/>
+                <circle id="scoreRingProgress" class="score-ring__progress" cx="60" cy="60" r="52"/>
+              </svg>
+              <div class="score-ring__value">
+                <span id="atsScore">—</span>
+                <small>/ 100</small>
+              </div>
+            </div>
+            <p id="scoreLabel" class="score-label">Analyzing…</p>
+          </article>
+
+          <article class="bento__feedback card card--span-2">
+            <p class="card__label">Detailed feedback</p>
+            <div class="feedback-block">
+              <p id="feedbackText"></p>
+            </div>
+          </article>
+
+          <article class="bento__skills card">
+            <p class="card__label">Skills found</p>
+            <div id="skillsFound" class="tag-list"></div>
+          </article>
+
+          <article class="bento__gaps card">
+            <p class="card__label">Skill gaps</p>
+            <div id="skillGaps" class="tag-list tag-list--gap"></div>
+          </article>
+
+          <article class="bento__strengths card card--span-2">
+            <p class="card__label">Strengths</p>
+            <ul id="strengthsList" class="strength-list"></ul>
+          </article>
+
+          <article class="bento__projects card card--full">
+            <div class="card__row">
+              <p class="card__label">Portfolio project ideas</p>
+              <span class="card__pill">3 suggestions</span>
+            </div>
+            <div id="projectCards" class="project-grid"></div>
+          </article>
+
+          <article class="bento__interview card card--full">
+            <div class="card__row">
+              <p class="card__label">Mock interview prep</p>
+              <span id="interviewCount" class="card__pill">10 questions</span>
+            </div>
+            <div id="interviewList" class="interview-list"></div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer shell">
+      Demo project for students · Do not upload sensitive data · Built with Python + FastAPI + Gemini
+    </footer>
+
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>
